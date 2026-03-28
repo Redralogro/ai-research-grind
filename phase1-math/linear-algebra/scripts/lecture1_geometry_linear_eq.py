@@ -230,13 +230,12 @@ class Lecture1_WhenItFails(Scene):
         divider.shift(LEFT * 2.5)
         self.play(Create(divider))
 
-        # Left panel
+        # Left panel — compact, no overlap
         info = VGroup(
-            Text("Problem:", font_size=22, color=GREY),
-            Text("Both columns point", font_size=22, color=WHITE),
-            Text("in the SAME direction", font_size=22, color=RED),
-        ).arrange(DOWN, buff=0.2, aligned_edge=LEFT)
-        info.move_to(LEFT * 5 + UP * 1)
+            Text("Problem:", font_size=20, color=GREY),
+            Text("Columns point same direction", font_size=18, color=RED),
+        ).arrange(DOWN, buff=0.15, aligned_edge=LEFT)
+        info.move_to(LEFT * 5 + UP * 1.5)
 
         self.play(Write(info))
 
@@ -272,8 +271,8 @@ class Lecture1_WhenItFails(Scene):
             axes.c2p(-3.5, -1.75), axes.c2p(3.5, 1.75),
             color=YELLOW, stroke_width=2, stroke_opacity=0.5,
         )
-        span_text = Text("all combinations\nland on this line", font_size=18, color=YELLOW)
-        span_text.next_to(axes.c2p(2.5, 1.25), UP, buff=0.2)
+        span_text = Text("all combinations\nland here", font_size=16, color=YELLOW)
+        span_text.next_to(axes.c2p(3, 1.5), UP, buff=0.15)
 
         self.play(Create(span_line), Write(span_text))
         self.wait(0.5)
@@ -291,20 +290,25 @@ class Lecture1_WhenItFails(Scene):
         self.play(Write(cross))
         self.wait(0.5)
 
-        # Left panel: explanation
-        explain = VGroup(
-            MathTex(r"\vec{c_2} = -1 \times \vec{c_1}", font_size=26, color=GREY),
-            Text("Linearly dependent!", font_size=22, color=RED),
-            Text("", font_size=10),
-            Text("Combinations only", font_size=20, color=WHITE),
-            Text("cover a LINE, not", font_size=20, color=WHITE),
-            Text("the whole 2D plane", font_size=20, color=WHITE),
-            Text("", font_size=10),
-            MathTex(r"\Rightarrow", font_size=28, color=YELLOW),
-            Text("Ax = b has NO solution", font_size=20, color=YELLOW),
-            Text("for some b", font_size=20, color=YELLOW),
-        ).arrange(DOWN, buff=0.15, aligned_edge=LEFT)
-        explain.move_to(LEFT * 5 + DOWN * 1.8)
+        # Left panel: explanation — use smaller font, more spacing control
+        eq_dep = MathTex(r"\vec{c_2} = -\vec{c_1}", font_size=24, color=GREY)
+        eq_dep.move_to(LEFT * 5 + DOWN * 0)
 
-        self.play(Write(explain), run_time=3)
+        text_dep = Text("Linearly dependent!", font_size=18, color=RED)
+        text_dep.move_to(LEFT * 5 + DOWN * 0.6)
+
+        text_cover = Text("Can only reach a line,", font_size=16, color=WHITE)
+        text_cover.move_to(LEFT * 5 + DOWN * 1.2)
+
+        text_cover2 = Text("not all of 2D", font_size=16, color=WHITE)
+        text_cover2.move_to(LEFT * 5 + DOWN * 1.6)
+
+        text_result = MathTex(r"\Rightarrow \text{No solution for some } \vec{b}",
+                             font_size=22, color=YELLOW)
+        text_result.move_to(LEFT * 4.5 + DOWN * 2.3)
+
+        self.play(Write(eq_dep))
+        self.play(Write(text_dep))
+        self.play(Write(text_cover), Write(text_cover2))
+        self.play(Write(text_result))
         self.wait(3)
