@@ -233,8 +233,9 @@ class Lecture1_WhenItFails(Scene):
         # Left panel — compact, no overlap
         info = VGroup(
             Text("Problem:", font_size=20, color=GREY),
-            Text("Columns point same direction", font_size=18, color=RED),
-        ).arrange(DOWN, buff=0.15, aligned_edge=LEFT)
+            Text("Columns are collinear", font_size=18, color=RED),
+            Text("(one is a scalar multiple)", font_size=14, color=GREY),
+        ).arrange(DOWN, buff=0.12, aligned_edge=LEFT)
         info.move_to(LEFT * 5 + UP * 1.5)
 
         self.play(Write(info))
