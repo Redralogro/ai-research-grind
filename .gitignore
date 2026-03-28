@@ -1,0 +1,20 @@
+# Rendered videos (regenerate from scripts)
+*.mp4
+*.mov
+*.avi
+*.webm
+
+# Manim build artifacts
+media/
+__pycache__/
+*.pyc
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Python
+*.egg-info/
+dist/
+build/
+.venv/
