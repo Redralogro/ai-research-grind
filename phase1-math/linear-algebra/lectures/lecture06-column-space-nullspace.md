@@ -1,223 +1,111 @@
-# Lecture 6: Column Space and Null Space
+# Lecture 6: Column Space and Nullspace
 
-**MIT 18.06 Linear Algebra, Prof. Gilbert Strang**
+> MIT 18.06 Linear Algebra — Gilbert Strang
 
-## The Big Ideas
+## Subspaces of a Vector Space
 
-1. Every matrix A has two fundamental subspaces: its **column space** C(A) and its **null space** N(A)
-2. **Ax = b** is solvable exactly when b is in the column space
-3. The **rank-nullity theorem** connects the dimensions of these spaces: rank + nullity = n
+A **subspace** of a vector space must satisfy three requirements:
 
----
+1. Contains the zero vector $\mathbf{0}$
+2. Closed under addition: if $\mathbf{u}, \mathbf{v}$ are in the subspace, so is $\mathbf{u} + \mathbf{v}$
+3. Closed under scalar multiplication: if $\mathbf{v}$ is in the subspace and $c$ is a scalar, so is $c\mathbf{v}$
 
-## Column Space C(A)
+Equivalently, a subspace must be **closed under all linear combinations**: if $\mathbf{u}$ and $\mathbf{v}$ are in the subspace, then $c\mathbf{u} + d\mathbf{v}$ is in the subspace for all scalars $c, d$.
 
-### Definition
+### Examples and Non-Examples in $\mathbb{R}^2$
 
-The **column space** of A is the set of all linear combinations of the columns of A:
-```
-C(A) = { Ax : x ∈ Rⁿ } = span of columns of A
-```
+- The zero vector alone $\{\mathbf{0}\}$: subspace
+- Any line through the origin: subspace
+- All of $\mathbb{R}^2$: subspace
+- A line **not** through the origin: **not** a subspace (fails to contain $\mathbf{0}$)
+- The first quadrant ($x \geq 0, y \geq 0$): **not** a subspace (not closed under scalar multiplication — multiply by $-1$)
 
-It answers the question: **what outputs b can Ax produce?**
+## Column Space $C(A)$
 
-### Example
-```
-A = ┌      ┐
-    │ 1  3 │
-    │ 2  6 │       columns: [1,2] and [3,6]
-    │ 3  9 │
-    └      ┘
-```
+The **column space** of a matrix $A$ is the set of all linear combinations of the columns of $A$.
 
-The columns [1,2,3] and [3,6,9] are **parallel** (second = 3 × first). So:
-```
-C(A) = all multiples of [1, 2, 3] = a line through the origin in R³
-```
+$$C(A) = \{ A\mathbf{x} : \mathbf{x} \in \mathbb{R}^n \}$$
 
-C(A) is a **1-dimensional** subspace of R³.
+If $A$ is $m \times n$ with columns $\mathbf{a}_1, \mathbf{a}_2, \ldots, \mathbf{a}_n$, then:
 
-### Why It's a Subspace
+$$C(A) = \text{all } x_1 \mathbf{a}_1 + x_2 \mathbf{a}_2 + \cdots + x_n \mathbf{a}_n$$
 
-C(A) is closed under addition and scalar multiplication:
-- If b₁ = Ax₁ and b₂ = Ax₂, then b₁ + b₂ = A(x₁ + x₂) ∈ C(A)
-- If b = Ax, then cb = A(cx) ∈ C(A)
-- The zero vector is in C(A): A·**0** = **0**
+The column space $C(A)$ is a **subspace of $\mathbb{R}^m$** (the columns have $m$ components).
 
----
+### Why Is $C(A)$ a Subspace?
 
-## Null Space N(A)
+If $A\mathbf{x} = \mathbf{u}$ and $A\mathbf{y} = \mathbf{v}$, then $A(\mathbf{x} + \mathbf{y}) = \mathbf{u} + \mathbf{v}$ and $A(c\mathbf{x}) = c\mathbf{u}$. So the set of all outputs $A\mathbf{x}$ is closed under addition and scalar multiplication.
 
-### Definition
+### Connection to $Ax = b$
 
-The **null space** of A is the set of all solutions to Ax = **0**:
-```
-N(A) = { x ∈ Rⁿ : Ax = 0 }
-```
+> **$A\mathbf{x} = \mathbf{b}$ is solvable if and only if $\mathbf{b}$ is in the column space $C(A)$.**
 
-It answers the question: **what inputs x does A send to zero?**
+This is the fundamental connection. Solving $A\mathbf{x} = \mathbf{b}$ is the same as asking: is $\mathbf{b}$ a linear combination of the columns of $A$?
 
 ### Example
-```
-A = ┌         ┐
-    │ 1  2  3 │
-    │ 2  4  6 │
-    └         ┘
-```
 
-Solve Ax = 0. After elimination:
-```
-U = ┌         ┐
-    │ 1  2  3 │
-    │ 0  0  0 │
-    └         ┘
-```
+$$A = \begin{bmatrix} 1 & 1 & 2 \\ 2 & 1 & 3 \\ 3 & 1 & 4 \\ 4 & 1 & 5 \end{bmatrix}$$
 
-One pivot (column 1), two free variables (columns 2 and 3).
+This is a $4 \times 3$ matrix, so $C(A)$ is a subspace of $\mathbb{R}^4$.
 
-Setting free variables: x₂ = 1, x₃ = 0 → x₁ = -2:
-```
-x₁ = [-2, 1, 0]
-```
+Can $C(A)$ be all of $\mathbb{R}^4$? **No.** Three columns in $\mathbb{R}^4$ cannot span all of $\mathbb{R}^4$ — we need at least 4 independent vectors for that.
 
-Setting free variables: x₂ = 0, x₃ = 1 → x₁ = -3:
-```
-x₂ = [-3, 0, 1]
-```
+Notice that column 3 = column 1 + column 2. So $C(A)$ is really spanned by just two independent columns. The column space is a **2-dimensional subspace** (a plane through the origin) in $\mathbb{R}^4$.
 
-**Null space** = all combinations c₁[-2,1,0] + c₂[-3,0,1] — a **2-dimensional** subspace of R³.
+For which $\mathbf{b}$ can we solve $A\mathbf{x} = \mathbf{b}$? Exactly those $\mathbf{b}$ of the form $b_1 \mathbf{a}_1 + b_2 \mathbf{a}_2$ — the vectors in that 2D plane.
 
-### Why It's a Subspace
+## Nullspace $N(A)$
 
-N(A) is closed under addition and scalar multiplication:
-- If Ax₁ = 0 and Ax₂ = 0, then A(x₁ + x₂) = Ax₁ + Ax₂ = 0 + 0 = 0
-- If Ax = 0, then A(cx) = cAx = c·0 = 0
-- A·**0** = **0**, so the zero vector is in N(A)
+The **nullspace** of a matrix $A$ is the set of all solutions to $A\mathbf{x} = \mathbf{0}$.
 
----
+$$N(A) = \{ \mathbf{x} \in \mathbb{R}^n : A\mathbf{x} = \mathbf{0} \}$$
 
-## Rank and Dimension
+If $A$ is $m \times n$, then the nullspace $N(A)$ is a **subspace of $\mathbb{R}^n$** (the vectors $\mathbf{x}$ have $n$ components).
 
-### Rank
+### Proof That $N(A)$ Is a Subspace
 
-The **rank** of a matrix is the dimension of its column space:
-```
-rank(A) = dim(C(A)) = number of pivots
-```
+We verify closure under addition and scalar multiplication:
 
-### Nullity
+1. If $A\mathbf{x} = \mathbf{0}$ and $A\mathbf{y} = \mathbf{0}$, then $A(\mathbf{x} + \mathbf{y}) = A\mathbf{x} + A\mathbf{y} = \mathbf{0} + \mathbf{0} = \mathbf{0}$. So $\mathbf{x} + \mathbf{y} \in N(A)$.
+2. If $A\mathbf{x} = \mathbf{0}$, then $A(c\mathbf{x}) = cA\mathbf{x} = c\mathbf{0} = \mathbf{0}$. So $c\mathbf{x} \in N(A)$.
+3. $A\mathbf{0} = \mathbf{0}$, so $\mathbf{0} \in N(A)$.
 
-The **nullity** of a matrix is the dimension of its null space:
-```
-nullity(A) = dim(N(A)) = number of free variables
-```
+### Important Contrast
 
----
-
-## The Rank-Nullity Theorem
-
-For an m×n matrix A:
-```
-rank(A) + nullity(A) = n
-```
-
-| Term | Equals | Meaning |
-|------|--------|---------|
-| rank | # pivots | Dimensions of output that A "uses" |
-| nullity | # free variables | Dimensions of input that A "kills" |
-| n | # columns | Total input dimensions |
+The solutions to $A\mathbf{x} = \mathbf{b}$ (with $\mathbf{b} \neq \mathbf{0}$) do **not** form a subspace. The zero vector is not a solution when $\mathbf{b} \neq \mathbf{0}$.
 
 ### Example
-```
-A = ┌         ┐
-    │ 1  2  3 │    2×3 matrix, so n = 3
-    │ 2  4  6 │
-    └         ┘
-```
-- rank = 1 (one pivot)
-- nullity = 2 (two free variables)
-- 1 + 2 = 3 = n ✓
 
----
+Using the same matrix:
 
-## Solving Ax = b
+$$A = \begin{bmatrix} 1 & 1 & 2 \\ 2 & 1 & 3 \\ 3 & 1 & 4 \\ 4 & 1 & 5 \end{bmatrix}$$
 
-### When Is Ax = b Solvable?
+Solve $A\mathbf{x} = \mathbf{0}$:
 
-**Ax = b is solvable if and only if b is in the column space C(A).**
+$$x_1 + x_2 + 2x_3 = 0$$
+$$2x_1 + x_2 + 3x_3 = 0$$
+$$3x_1 + x_2 + 4x_3 = 0$$
+$$4x_1 + x_2 + 5x_3 = 0$$
 
-```
-b ∈ C(A)  ⟺  Ax = b has a solution
-```
+Since column 3 = column 1 + column 2, one solution is $\mathbf{x} = (1, 1, -1)$. All scalar multiples $c(1, 1, -1)$ are also in the nullspace.
 
-### Example: Solvable
-```
-A = ┌      ┐       b = ┌   ┐
-    │ 1  3 │           │ 4 │
-    │ 2  6 │           │ 8 │    b = 4·[1,2,3] → b ∈ C(A) ✓
-    │ 3  9 │           │12 │
-    └      ┘           └   ┘
-```
+The nullspace is a **line through the origin** in $\mathbb{R}^3$.
 
-### Example: Not Solvable
-```
-A = ┌      ┐       b = ┌   ┐
-    │ 1  3 │           │ 1 │
-    │ 2  6 │           │ 1 │    b is NOT a multiple of [1,2,3] → b ∉ C(A) ✗
-    │ 3  9 │           │ 1 │
-    └      ┘           └   ┘
-```
+## Column Space vs. Nullspace: Summary
 
----
+| Property | Column Space $C(A)$ | Nullspace $N(A)$ |
+|---|---|---|
+| Definition | All $A\mathbf{x}$ | All $\mathbf{x}$ with $A\mathbf{x} = \mathbf{0}$ |
+| Lives in | $\mathbb{R}^m$ | $\mathbb{R}^n$ |
+| Subspace of | The output space | The input space |
 
-## Complete Solution
-
-When Ax = b **is** solvable, the complete solution has the form:
-```
-x = x_particular + x_null
-```
-
-| Component | What It Is | How to Find It |
-|-----------|-----------|----------------|
-| **x_particular** | Any single solution to Ax = b | Set free variables to 0, solve for pivots |
-| **x_null** | Any vector in N(A) | All solutions to Ax = 0 |
-
-### Why This Works
-
-If Ax_p = b and Ax_n = 0, then:
-```
-A(x_p + x_n) = Ax_p + Ax_n = b + 0 = b  ✓
-```
-
-### Geometric Picture
-
-The complete solution is **a shifted copy of the null space**:
-- The null space passes through the origin
-- x_particular shifts it to pass through a solution of Ax = b
-- If nullity = 0, there's exactly **one** solution (the particular solution)
-- If nullity > 0, there are **infinitely many** solutions
-
----
+For an $m \times n$ matrix: $C(A) \subseteq \mathbb{R}^m$ and $N(A) \subseteq \mathbb{R}^n$. These are subspaces of **different** spaces (unless $m = n$).
 
 ## Key Takeaways
 
-| Concept | Meaning |
-|---------|---------|
-| **Column space C(A)** | All possible outputs Ax; span of columns |
-| **Null space N(A)** | All x where Ax = 0 |
-| **Rank** | dim(C(A)) = number of pivots |
-| **Nullity** | dim(N(A)) = number of free variables |
-| **Rank-nullity theorem** | rank + nullity = n (number of columns) |
-| **Solvability** | Ax = b solvable iff b ∈ C(A) |
-| **Complete solution** | x = x_particular + x_null |
-
----
-
-## Coming Up
-
-**Lecture 7**: Solving Ax = 0 — pivot variables, free variables, and special solutions
-**Lecture 8**: Solving Ax = b — row reduced form R
-
----
-
-**Videos**: See `phase1-math/linear-algebra/videos/` for Manim animations of these concepts.
+1. A **subspace** must contain $\mathbf{0}$ and be closed under addition and scalar multiplication.
+2. The **column space** $C(A)$ is all linear combinations of the columns of $A$. It is a subspace of $\mathbb{R}^m$.
+3. $A\mathbf{x} = \mathbf{b}$ is solvable if and only if $\mathbf{b} \in C(A)$.
+4. The **nullspace** $N(A)$ is all solutions to $A\mathbf{x} = \mathbf{0}$. It is a subspace of $\mathbb{R}^n$.
+5. The proof that $N(A)$ is a subspace is a direct consequence of linearity: $A(\mathbf{x} + \mathbf{y}) = A\mathbf{x} + A\mathbf{y}$ and $A(c\mathbf{x}) = cA\mathbf{x}$.
+6. Solutions to $A\mathbf{x} = \mathbf{b}$ with $\mathbf{b} \neq \mathbf{0}$ do **not** form a subspace.

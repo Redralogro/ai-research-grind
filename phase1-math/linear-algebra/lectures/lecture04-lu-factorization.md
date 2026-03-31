@@ -1,194 +1,103 @@
 # Lecture 4: Factorization into A = LU
 
-**MIT 18.06 Linear Algebra, Prof. Gilbert Strang**
+> MIT 18.06 Linear Algebra — Gilbert Strang
 
-## The Big Idea
+## From Elimination to Factorization
 
-Elimination is not just a procedure — it produces a **factorization**. Every invertible matrix A can be written as:
-```
-A = L · U
-```
-where **L** is lower triangular (with 1s on the diagonal) and **U** is upper triangular (the pivots and above).
+In Lecture 2, elimination gave us $EA = U$. Now we flip it around:
 
-The key insight: **the multipliers from elimination go directly into L** (with no sign flip), as long as no row exchanges are needed.
+$$A = E^{-1}U = LU$$
 
----
+The matrix $L$ (lower triangular) records **what elimination did**. The matrix $U$ (upper triangular) records **what elimination produced**. Together, $A = LU$ is the factorization form of elimination.
 
-## Review: From Elimination to Factorization
+## Building $L$ from Elimination Matrices
 
-Elimination gives us:
-```
-E₃₂ · E₂₁ · A = U
-```
+Suppose elimination uses two steps (no row exchanges):
 
-Solving for A:
-```
-A = E₂₁⁻¹ · E₃₂⁻¹ · U = L · U
-```
+$$E_{32} E_{21} A = U$$
 
-The product of inverse elimination matrices is **L**.
+Then:
 
-Why is this better than keeping track of E matrices?
+$$A = E_{21}^{-1} E_{32}^{-1} U = LU$$
 
-| Approach | What happens to multipliers |
-|----------|----------------------------|
-| **E matrix** | Multipliers get a **minus sign** |
-| **L = E⁻¹** | Multipliers go in **directly** (no sign flip) |
-| **Product of Es** | Multipliers can **interact** and change |
-| **L (no row exchanges)** | Multipliers just **sit in place** — beautiful! |
+where $L = E_{21}^{-1} E_{32}^{-1}$.
 
----
+### Inverses of Elimination Matrices
 
-## Why L Is So Nice
+If $E_{21}$ subtracts $\ell_{21}$ times row 1 from row 2, then $E_{21}^{-1}$ **adds** $\ell_{21}$ times row 1 back to row 2:
 
-When there are **no row exchanges**, the multipliers from elimination drop directly into L without interference.
+$$E_{21} = \begin{bmatrix} 1 & 0 & 0 \\ -\ell_{21} & 1 & 0 \\ 0 & 0 & 1 \end{bmatrix}, \quad E_{21}^{-1} = \begin{bmatrix} 1 & 0 & 0 \\ \ell_{21} & 1 & 0 \\ 0 & 0 & 1 \end{bmatrix}$$
 
-If elimination uses multiplier `ℓᵢⱼ` to eliminate entry (i,j), then that same `ℓᵢⱼ` appears in position (i,j) of L.
+Just flip the sign of the multiplier.
 
-This is a small miracle: the multipliers don't interact with each other when assembled into L.
+### The Key Insight: Multipliers Drop Right In
 
----
+When we multiply the inverses $E_{21}^{-1} E_{32}^{-1}$, the multipliers slot into $L$ with no interference:
 
-## Full Example
+$$L = E_{21}^{-1} E_{32}^{-1} = \begin{bmatrix} 1 & 0 & 0 \\ \ell_{21} & 1 & 0 \\ 0 & 0 & 1 \end{bmatrix} \begin{bmatrix} 1 & 0 & 0 \\ 0 & 1 & 0 \\ 0 & \ell_{32} & 1 \end{bmatrix} = \begin{bmatrix} 1 & 0 & 0 \\ \ell_{21} & 1 & 0 \\ 0 & \ell_{32} & 1 \end{bmatrix}$$
 
-### Start with A:
-```
-A = ┌         ┐
-    │ 1  2  1 │
-    │ 3  8  1 │
-    │ 0  4  1 │
-    └         ┘
-```
+This is why $L$ is better than $E$: the multipliers go directly below the diagonal with no interaction between them. If there were also $\ell_{31}$, it would sit in the $(3,1)$ position. Every multiplier lands in its natural spot.
 
-### Step 1: Eliminate below pivot (1,1)
+**This does not work for $E$!** The product $E_{32}E_{21}$ mixes the multipliers together. $L$ is the clean factorization.
 
-**Multiplier** ℓ₂₁ = 3 (because 3/1 = 3)
+## The Structure of $A = LU$
 
-**Operation**: Row₂ → Row₂ - 3·Row₁
-```
-┌         ┐
-│ 1  2  1 │
-│ 0  2 -2 │  ← 3-3=0, 8-6=2, 1-3=-2
-│ 0  4  1 │
-└         ┘
-```
+$$A = LU = \begin{bmatrix} 1 & 0 & 0 \\ \ell_{21} & 1 & 0 \\ \ell_{31} & \ell_{32} & 1 \end{bmatrix} \begin{bmatrix} u_{11} & u_{12} & u_{13} \\ 0 & u_{22} & u_{23} \\ 0 & 0 & u_{33} \end{bmatrix}$$
 
-### Step 2: Eliminate below pivot (2,2)
+- $L$: lower triangular, **1s on the diagonal**, multipliers below
+- $U$: upper triangular, **pivots on the diagonal**
 
-**Multiplier** ℓ₃₂ = 2 (because 4/2 = 2)
+Some authors also write $A = LDU$ where $D$ is diagonal (containing the pivots) and $U$ has 1s on its diagonal.
 
-**Operation**: Row₃ → Row₃ - 2·Row₂
-```
-┌         ┐
-│ 1  2  1 │
-│ 0  2 -2 │
-│ 0  0  5 │  ← 0-0=0, 4-4=0, 1-(-4)=5
-└         ┘
-```
+## Computational Cost
 
-This is **U**.
+How many operations does elimination require for an $n \times n$ matrix?
 
-### Assemble L from multipliers:
-```
-L = ┌         ┐
-    │ 1  0  0 │  ← 1s on diagonal
-    │ 3  1  0 │  ← ℓ₂₁ = 3
-    │ 0  2  1 │  ← ℓ₃₁ = 0, ℓ₃₂ = 2
-    └         ┘
-```
+- Eliminating column 1: roughly $n^2$ operations (modify an $(n-1) \times (n-1)$ block)
+- Eliminating column 2: roughly $(n-1)^2$ operations
+- And so on...
 
-### Verify A = LU:
-```
-┌         ┐   ┌         ┐   ┌         ┐
-│ 1  0  0 │   │ 1  2  1 │   │ 1  2  1 │
-│ 3  1  0 │ · │ 0  2 -2 │ = │ 3  8  1 │ = A  ✓
-│ 0  2  1 │   │ 0  0  5 │   │ 0  4  1 │
-└         ┘   └         ┘   └         ┘
-```
+Total: $n^2 + (n-1)^2 + \cdots + 1^2 \approx \frac{n^3}{3}$ multiplications.
 
----
+**Not $n^3$, but $\frac{n^3}{3}$.** This is the cost of factoring $A$ into $LU$.
 
-## Cost of Elimination
+## Row Exchanges: $PA = LU$
 
-How many operations does elimination take for an n×n matrix?
+When a zero (or dangerously small number) appears in a pivot position, we need a **row exchange**. This is recorded by a permutation matrix $P$.
 
-| Step | Operations |
-|------|-----------|
-| Eliminate column 1 | ~n² |
-| Eliminate column 2 | ~(n-1)² |
-| Eliminate column 3 | ~(n-2)² |
-| ... | ... |
-| **Total** | **~n³/3** |
+The complete factorization with possible row exchanges is:
 
-The sum 1² + 2² + ... + n² ≈ n³/3.
+$$PA = LU$$
 
-For a 100×100 matrix: ~333,000 operations (very fast).
-For a 1000×1000 matrix: ~333,000,000 operations (still manageable).
+$P$ rearranges the rows of $A$ into the order that elimination actually processes them.
 
----
+## Why Factor?
 
-## When Row Exchanges Are Needed: PA = LU
+Suppose we need to solve $Ax = b$ for many different right-hand sides $b$, all with the same $A$.
 
-If a zero appears in a pivot position, we need a **row exchange** (permutation).
+**Without $LU$:** Each solve costs $\frac{n^3}{3}$ operations.
 
-The general factorization becomes:
-```
-PA = LU
-```
-where **P** is a permutation matrix that reorders the rows of A so elimination can proceed without zero pivots.
+**With $LU$:** Factor once ($\frac{n^3}{3}$), then for each $b$:
 
-Every invertible matrix has a PA = LU factorization.
+1. **Forward substitution:** Solve $Lc = b$ for $c$ — cost $\frac{n^2}{2}$
+2. **Back substitution:** Solve $Ux = c$ for $x$ — cost $\frac{n^2}{2}$
 
----
+Each additional right-hand side costs only $n^2$, not $n^3$. This is a huge saving.
 
-## Solving Ax = b with LU
+## Example
 
-Once we have A = LU, solving Ax = b becomes two easy triangular solves:
+$$A = \begin{bmatrix} 1 & 2 & 1 \\ 3 & 8 & 1 \\ 0 & 4 & 1 \end{bmatrix}$$
 
-### Step 1: Forward Substitution — Solve Ly = b
-```
-┌         ┐ ┌    ┐   ┌    ┐
-│ 1  0  0 │ │ y₁ │   │ b₁ │
-│ 3  1  0 │ │ y₂ │ = │ b₂ │
-│ 0  2  1 │ │ y₃ │   │ b₃ │
-└         ┘ └    ┘   └    ┘
-```
-Solve from **top to bottom** (forward substitution).
+From Lecture 2, elimination with multipliers $\ell_{21} = 3$, $\ell_{31} = 0$, $\ell_{32} = 2$ gives:
 
-### Step 2: Back Substitution — Solve Ux = y
-```
-┌          ┐ ┌    ┐   ┌    ┐
-│ 1  2   1 │ │ x₁ │   │ y₁ │
-│ 0  2  -2 │ │ x₂ │ = │ y₂ │
-│ 0  0   5 │ │ x₃ │   │ y₃ │
-└          ┘ └    ┘   └    ┘
-```
-Solve from **bottom to top** (back substitution).
+$$L = \begin{bmatrix} 1 & 0 & 0 \\ 3 & 1 & 0 \\ 0 & 2 & 1 \end{bmatrix}, \quad U = \begin{bmatrix} 1 & 2 & 1 \\ 0 & 2 & -2 \\ 0 & 0 & 5 \end{bmatrix}$$
 
-### Why is this useful?
-If you need to solve Ax = b for **many different b vectors** (same A), you factor A = LU **once** and then do two cheap triangular solves for each b. This is much faster than re-doing elimination each time.
-
----
+Verify: $LU = A$. The multipliers from elimination are sitting right there in $L$.
 
 ## Key Takeaways
 
-| Concept | Meaning |
-|---------|---------|
-| **A = LU** | Elimination stored as a factorization |
-| **L (lower triangular)** | Multipliers from elimination, 1s on diagonal |
-| **U (upper triangular)** | Result of elimination (pivots on diagonal) |
-| **Multipliers drop in** | No sign flip when building L (if no row exchanges) |
-| **Cost: ~n³/3** | Elimination is O(n³), manageable for large matrices |
-| **PA = LU** | General form when row exchanges are needed |
-| **Two triangular solves** | Ly = b (forward), Ux = y (back) — fast for multiple b |
-
----
-
-## Coming Up
-
-**Lecture 5**: Transposes, Permutations, and Vector Spaces
-**Lecture 6**: Column Space and Null Space
-
----
-
-**Videos**: See `phase1-math/linear-algebra/videos/` for Manim animations of these concepts.
+1. Elimination is really a **factorization**: $A = LU$, where $L$ holds the multipliers and $U$ is the upper triangular result.
+2. The inverses of elimination matrices combine cleanly: **multipliers drop into $L$ without interfering** with each other.
+3. The cost of elimination is $\approx \frac{n^3}{3}$ operations, not $n^3$.
+4. When row exchanges are needed, the factorization becomes $PA = LU$.
+5. The payoff of $LU$: factor once, then solve for each new $b$ cheaply via forward and back substitution ($n^2$ per solve instead of $n^3$).

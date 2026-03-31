@@ -35,13 +35,13 @@ Videos are not committed (too large for git). Generate them from scripts:
 pip install manim
 
 # Render a specific scene (1080p 60fps)
-manim -qh phase1-math/linear-algebra/scripts/lecture1_geometry_linear_eq.py Lecture1_RowPicture
+manim -qh phase1-math/linear-algebra/scripts/lecture01_geometry_linear_eq.py Lecture1_RowPicture2D
 
 # Render all scenes in a file
-manim -qh phase1-math/linear-algebra/scripts/lecture1_geometry_linear_eq.py
+manim -qh phase1-math/linear-algebra/scripts/lecture01_geometry_linear_eq.py
 
 # Quick preview (480p)
-manim -ql phase1-math/linear-algebra/scripts/lecture1_geometry_linear_eq.py Lecture1_ColumnPicture
+manim -ql phase1-math/linear-algebra/scripts/lecture01_geometry_linear_eq.py Lecture1_ColumnPicture2D
 ```
 
 Output goes to `media/videos/` (gitignored).
@@ -51,18 +51,44 @@ Output goes to `media/videos/` (gitignored).
 ## Progress
 
 ### Phase 1: Math Foundations
-**Linear Algebra — MIT 18.06 (34 lectures)**
+**Linear Algebra — MIT 18.06 (Gilbert Strang, 34 lectures)**
+
+Each lecture has a Manim script (`scripts/`) and study notes (`lectures/`) strictly following Strang's MIT 18.06 content.
+
 - [x] Lecture 1: The Geometry of Linear Equations
-- [ ] Lecture 2: Elimination with Matrices
-- [ ] Lecture 3: Multiplication and Inverse Matrices
-- [ ] Lecture 4: Factorization into A = LU
-- [ ] Lecture 5: Transposes, Permutations, Spaces R^n
-- [ ] Lecture 6: Column Space and Nullspace
-- [ ] Lecture 7: Solving Ax = 0: Pivot Variables, Special Solutions
-- [ ] Lecture 8: Solving Ax = b: Row Reduced Form R
-- [ ] Lecture 9: Independence, Basis, and Dimension
-- [ ] Lecture 10: The Four Fundamental Subspaces
-- [ ] Lectures 11-34: _(in progress)_
+- [x] Lecture 2: Elimination with Matrices
+- [x] Lecture 3: Multiplication and Inverse Matrices
+- [x] Lecture 4: Factorization into A = LU
+- [x] Lecture 5: Transposes, Permutations, Spaces R^n
+- [x] Lecture 6: Column Space and Nullspace
+- [x] Lecture 7: Solving Ax = 0: Pivot Variables, Special Solutions
+- [x] Lecture 8: Solving Ax = b: Row Reduced Form R
+- [x] Lecture 9: Independence, Basis, and Dimension
+- [x] Lecture 10: The Four Fundamental Subspaces
+- [ ] Lecture 11: Matrix Spaces; Rank 1; Small World Graphs
+- [ ] Lecture 12: Graphs, Networks, Incidence Matrices
+- [ ] Lecture 13: Quiz 1 Review
+- [ ] Lecture 14: Orthogonal Vectors and Subspaces
+- [ ] Lecture 15: Projections onto Subspaces
+- [ ] Lecture 16: Projection Matrices and Least Squares
+- [ ] Lecture 17: Orthogonal Matrices and Gram-Schmidt
+- [ ] Lecture 18: Properties of Determinants
+- [ ] Lecture 19: Determinant Formulas and Cofactors
+- [ ] Lecture 20: Cramer's Rule, Inverse Matrix, and Volume
+- [ ] Lecture 21: Eigenvalues and Eigenvectors
+- [ ] Lecture 22: Diagonalization and Powers of A
+- [ ] Lecture 23: Differential Equations and exp(At)
+- [ ] Lecture 24: Markov Matrices; Fourier Series
+- [ ] Lecture 25: Symmetric Matrices and Positive Definiteness
+- [ ] Lecture 26: Complex Matrices; Fast Fourier Transform
+- [ ] Lecture 27: Positive Definite Matrices and Minima
+- [ ] Lecture 28: Similar Matrices and Jordan Form
+- [ ] Lecture 29: Singular Value Decomposition
+- [ ] Lecture 30: Linear Transformations and Their Matrices
+- [ ] Lecture 31: Change of Basis; Image Compression
+- [ ] Lecture 32: Quiz 3 Review
+- [ ] Lecture 33: Left and Right Inverses; Pseudoinverse
+- [ ] Lecture 34: Final Course Review
 
 ### Phase 2-6: Coming soon
 
