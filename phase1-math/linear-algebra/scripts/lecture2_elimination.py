@@ -630,5 +630,327 @@ class Lecture2_WhenItFails(Scene):
         for point in summary_points:
             self.play(FadeIn(point), run_time=0.8)
             self.wait(0.4)
-        
+
+        self.wait(2)
+
+
+class Lecture2_EliminationAsShear(Scene):
+    """Show elimination as a geometric shear transformation on a 2D grid."""
+
+    def construct(self):
+        # Create the number plane (grid)
+        plane = NumberPlane(
+            x_range=[-5, 5, 1],
+            y_range=[-5, 5, 1],
+            background_line_style={"stroke_opacity": 0.4},
+        )
+
+        # Basis vectors
+        i_hat = Arrow(ORIGIN, RIGHT, buff=0, color=GREEN, stroke_width=5)
+        j_hat = Arrow(ORIGIN, UP, buff=0, color=RED, stroke_width=5)
+
+        # Unit square at origin
+        unit_square = Square(side_length=1)
+        unit_square.move_to([0.5, 0.5, 0])
+        unit_square.set_fill(YELLOW, opacity=0.3)
+        unit_square.set_stroke(YELLOW, width=2)
+
+        # Basis vector labels
+        i_label = MathTex(r"\hat{\imath}", font_size=30, color=GREEN)
+        i_label.next_to(i_hat, DOWN, buff=0.15)
+        j_label = MathTex(r"\hat{\jmath}", font_size=30, color=RED)
+        j_label.next_to(j_hat, LEFT, buff=0.15)
+
+        self.play(Create(plane), run_time=1.5)
+        self.play(
+            GrowArrow(i_hat),
+            GrowArrow(j_hat),
+            FadeIn(i_label),
+            FadeIn(j_label),
+            FadeIn(unit_square),
+            run_time=1,
+        )
+        self.wait(0.5)
+
+        # Title with background
+        title_tex = Text("Elimination = Shear Transformation", font_size=36, color=WHITE)
+        title_bg = BackgroundRectangle(title_tex, fill_opacity=0.85, buff=0.2)
+        title_group = VGroup(title_bg, title_tex).to_edge(UP, buff=0.3)
+        self.play(FadeIn(title_group), run_time=0.8)
+        self.wait(0.8)
+
+        # Show the elimination matrix E21
+        matrix_label = MathTex(
+            r"E_{21} = \begin{bmatrix} 1 & 0 \\ -3 & 1 \end{bmatrix}",
+            font_size=32,
+        )
+        matrix_bg = BackgroundRectangle(matrix_label, fill_opacity=0.85, buff=0.2)
+        matrix_group = VGroup(matrix_bg, matrix_label)
+        matrix_group.to_corner(UL, buff=0.5).shift(DOWN * 0.8)
+        self.play(FadeIn(matrix_group), run_time=0.8)
+        self.wait(0.5)
+
+        # Apply the shear transformation E21 = [[1,0],[-3,1]]
+        e21 = [[1, 0], [-3, 1]]
+        self.play(
+            ApplyMatrix(e21, plane),
+            ApplyMatrix(e21, i_hat),
+            ApplyMatrix(e21, j_hat),
+            ApplyMatrix(e21, unit_square),
+            FadeOut(i_label),
+            FadeOut(j_label),
+            run_time=3,
+        )
+        self.wait(0.5)
+
+        # Annotate the operation
+        annot_tex = Text("Row 2 - 3 x Row 1", font_size=28, color=ORANGE)
+        annot_bg = BackgroundRectangle(annot_tex, fill_opacity=0.85, buff=0.15)
+        annot_group = VGroup(annot_bg, annot_tex)
+        annot_group.to_edge(DOWN, buff=0.5).shift(LEFT * 2)
+        self.play(FadeIn(annot_group), run_time=0.8)
+        self.wait(0.8)
+
+        # Note that horizontal lines are preserved
+        horiz_note = Text("Horizontal lines stay horizontal", font_size=24, color=BLUE)
+        horiz_bg = BackgroundRectangle(horiz_note, fill_opacity=0.85, buff=0.15)
+        horiz_group = VGroup(horiz_bg, horiz_note)
+        horiz_group.next_to(annot_group, UP, buff=0.3)
+        self.play(FadeIn(horiz_group), run_time=0.8)
+        self.wait(1)
+
+        # Show determinant = 1 (area unchanged)
+        det_tex = MathTex(
+            r"\det(E_{21}) = 1 \quad \Rightarrow \quad \text{Area unchanged}",
+            font_size=30,
+            color=GREEN,
+        )
+        det_bg = BackgroundRectangle(det_tex, fill_opacity=0.85, buff=0.2)
+        det_group = VGroup(det_bg, det_tex)
+        det_group.to_corner(DR, buff=0.5)
+        self.play(FadeIn(det_group), run_time=0.8)
+        self.wait(2)
+
+
+class Lecture2_ComposedElimination(Scene):
+    """Show composing two elimination steps as sequential shears on a grid."""
+
+    def construct(self):
+        # Create the number plane
+        plane = NumberPlane(
+            x_range=[-5, 5, 1],
+            y_range=[-5, 5, 1],
+            background_line_style={"stroke_opacity": 0.4},
+        )
+
+        # Basis vectors
+        i_hat = Arrow(ORIGIN, RIGHT, buff=0, color=GREEN, stroke_width=5)
+        j_hat = Arrow(ORIGIN, UP, buff=0, color=RED, stroke_width=5)
+
+        # Unit square
+        unit_square = Square(side_length=1)
+        unit_square.move_to([0.5, 0.5, 0])
+        unit_square.set_fill(YELLOW, opacity=0.3)
+        unit_square.set_stroke(YELLOW, width=2)
+
+        self.play(Create(plane), run_time=1.5)
+        self.play(
+            GrowArrow(i_hat),
+            GrowArrow(j_hat),
+            FadeIn(unit_square),
+            run_time=1,
+        )
+        self.wait(0.5)
+
+        # Title
+        title_tex = Text("Composing Elimination Steps", font_size=36, color=WHITE)
+        title_bg = BackgroundRectangle(title_tex, fill_opacity=0.85, buff=0.2)
+        title_group = VGroup(title_bg, title_tex).to_edge(UP, buff=0.3)
+        self.play(FadeIn(title_group), run_time=0.8)
+        self.wait(0.5)
+
+        # --- Step 1: E21 = [[1,0],[-2,1]] ---
+        step1_tex = MathTex(
+            r"\text{Step 1: } E_{21} = \begin{bmatrix} 1 & 0 \\ -2 & 1 \end{bmatrix}",
+            font_size=30,
+        )
+        step1_bg = BackgroundRectangle(step1_tex, fill_opacity=0.85, buff=0.15)
+        step1_group = VGroup(step1_bg, step1_tex)
+        step1_group.to_corner(UL, buff=0.5).shift(DOWN * 0.8)
+
+        step1_note = Text("Row2 - 2 * Row1", font_size=24, color=ORANGE)
+        step1_note_bg = BackgroundRectangle(step1_note, fill_opacity=0.85, buff=0.1)
+        step1_note_group = VGroup(step1_note_bg, step1_note)
+        step1_note_group.next_to(step1_group, DOWN, buff=0.2, aligned_edge=LEFT)
+
+        self.play(FadeIn(step1_group), FadeIn(step1_note_group), run_time=0.8)
+        self.wait(0.5)
+
+        e21 = [[1, 0], [-2, 1]]
+        self.play(
+            ApplyMatrix(e21, plane),
+            ApplyMatrix(e21, i_hat),
+            ApplyMatrix(e21, j_hat),
+            ApplyMatrix(e21, unit_square),
+            run_time=3,
+        )
+        self.wait(1)
+
+        # --- Step 2: E12 = [[1,-1],[0,1]] (back-substitution) ---
+        step2_tex = MathTex(
+            r"\text{Step 2: } E_{12} = \begin{bmatrix} 1 & -1 \\ 0 & 1 \end{bmatrix}",
+            font_size=30,
+        )
+        step2_bg = BackgroundRectangle(step2_tex, fill_opacity=0.85, buff=0.15)
+        step2_group = VGroup(step2_bg, step2_tex)
+        step2_group.to_corner(UR, buff=0.5).shift(DOWN * 0.8)
+
+        step2_note = Text("Row1 - 1 * Row2  (back-sub)", font_size=24, color=TEAL)
+        step2_note_bg = BackgroundRectangle(step2_note, fill_opacity=0.85, buff=0.1)
+        step2_note_group = VGroup(step2_note_bg, step2_note)
+        step2_note_group.next_to(step2_group, DOWN, buff=0.2, aligned_edge=RIGHT)
+
+        self.play(
+            FadeOut(step1_group),
+            FadeOut(step1_note_group),
+            FadeIn(step2_group),
+            FadeIn(step2_note_group),
+            run_time=0.8,
+        )
+        self.wait(0.5)
+
+        e12 = [[1, -1], [0, 1]]
+        self.play(
+            ApplyMatrix(e12, plane),
+            ApplyMatrix(e12, i_hat),
+            ApplyMatrix(e12, j_hat),
+            ApplyMatrix(e12, unit_square),
+            run_time=3,
+        )
+        self.wait(1)
+
+        # Show composed result
+        self.play(FadeOut(step2_group), FadeOut(step2_note_group), run_time=0.6)
+
+        composed_tex = MathTex(
+            r"E_{12} \cdot E_{21} = "
+            r"\begin{bmatrix} 1 & -1 \\ 0 & 1 \end{bmatrix}"
+            r"\begin{bmatrix} 1 & 0 \\ -2 & 1 \end{bmatrix}"
+            r"= \begin{bmatrix} 3 & -1 \\ -2 & 1 \end{bmatrix}",
+            font_size=28,
+        )
+        composed_bg = BackgroundRectangle(composed_tex, fill_opacity=0.85, buff=0.2)
+        composed_group = VGroup(composed_bg, composed_tex)
+        composed_group.to_edge(DOWN, buff=0.5)
+
+        self.play(FadeIn(composed_group), run_time=1)
+        self.wait(0.8)
+
+        # Determinant still 1
+        det_tex = MathTex(
+            r"\det(E_{12} \cdot E_{21}) = 1 \times 1 = 1",
+            font_size=28,
+            color=GREEN,
+        )
+        det_bg = BackgroundRectangle(det_tex, fill_opacity=0.85, buff=0.15)
+        det_group = VGroup(det_bg, det_tex)
+        det_group.next_to(composed_group, UP, buff=0.3)
+
+        self.play(FadeIn(det_group), run_time=0.8)
+        self.wait(2)
+
+
+class Lecture2_SingularElimination(Scene):
+    """Show what happens geometrically when elimination fails (singular matrix)."""
+
+    def construct(self):
+        # Create the number plane
+        plane = NumberPlane(
+            x_range=[-5, 5, 1],
+            y_range=[-5, 5, 1],
+            background_line_style={"stroke_opacity": 0.4},
+        )
+
+        # Basis vectors
+        i_hat = Arrow(ORIGIN, RIGHT, buff=0, color=GREEN, stroke_width=5)
+        j_hat = Arrow(ORIGIN, UP, buff=0, color=RED, stroke_width=5)
+
+        # Unit square
+        unit_square = Square(side_length=1)
+        unit_square.move_to([0.5, 0.5, 0])
+        unit_square.set_fill(YELLOW, opacity=0.3)
+        unit_square.set_stroke(YELLOW, width=2)
+
+        self.play(Create(plane), run_time=1.5)
+        self.play(
+            GrowArrow(i_hat),
+            GrowArrow(j_hat),
+            FadeIn(unit_square),
+            run_time=1,
+        )
+        self.wait(0.5)
+
+        # Title
+        title_tex = Text("Singular Matrix: Elimination Fails", font_size=36, color=RED)
+        title_bg = BackgroundRectangle(title_tex, fill_opacity=0.85, buff=0.2)
+        title_group = VGroup(title_bg, title_tex).to_edge(UP, buff=0.3)
+        self.play(FadeIn(title_group), run_time=0.8)
+        self.wait(0.5)
+
+        # Show the singular matrix
+        matrix_label = MathTex(
+            r"A = \begin{bmatrix} 1 & 2 \\ 2 & 4 \end{bmatrix}",
+            font_size=32,
+        )
+        matrix_bg = BackgroundRectangle(matrix_label, fill_opacity=0.85, buff=0.2)
+        matrix_group = VGroup(matrix_bg, matrix_label)
+        matrix_group.to_corner(UL, buff=0.5).shift(DOWN * 0.8)
+        self.play(FadeIn(matrix_group), run_time=0.8)
+        self.wait(0.5)
+
+        # Apply the singular transformation [[1,2],[2,4]]
+        singular = [[1, 2], [2, 4]]
+        self.play(
+            ApplyMatrix(singular, plane),
+            ApplyMatrix(singular, i_hat),
+            ApplyMatrix(singular, j_hat),
+            ApplyMatrix(singular, unit_square),
+            run_time=3,
+        )
+        self.wait(1)
+
+        # "Space collapses to a line"
+        collapse_tex = Text(
+            "Singular: Space collapses to a line",
+            font_size=28,
+            color=ORANGE,
+        )
+        collapse_bg = BackgroundRectangle(collapse_tex, fill_opacity=0.85, buff=0.15)
+        collapse_group = VGroup(collapse_bg, collapse_tex)
+        collapse_group.to_edge(DOWN, buff=1.2)
+        self.play(FadeIn(collapse_group), run_time=0.8)
+        self.wait(1)
+
+        # Show determinant = 0
+        det_tex = MathTex(
+            r"\det(A) = 1 \cdot 4 - 2 \cdot 2 = 0 \quad \Rightarrow \quad \text{Area} \to 0",
+            font_size=28,
+            color=RED,
+        )
+        det_bg = BackgroundRectangle(det_tex, fill_opacity=0.85, buff=0.15)
+        det_group = VGroup(det_bg, det_tex)
+        det_group.next_to(collapse_group, DOWN, buff=0.3)
+        self.play(FadeIn(det_group), run_time=0.8)
+        self.wait(1)
+
+        # Contrast: no inverse
+        no_inv_tex = Text(
+            "No inverse exists -- can't un-squish a line back to a plane",
+            font_size=24,
+            color=GREY,
+        )
+        no_inv_bg = BackgroundRectangle(no_inv_tex, fill_opacity=0.85, buff=0.15)
+        no_inv_group = VGroup(no_inv_bg, no_inv_tex)
+        no_inv_group.next_to(det_group, DOWN, buff=0.3)
+        self.play(FadeIn(no_inv_group), run_time=0.8)
         self.wait(2)

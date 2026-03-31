@@ -382,3 +382,506 @@ class Lecture3_InverseProperties(Scene):
         for t in takeaway:
             self.play(FadeIn(t), run_time=0.7)
         self.wait(2)
+
+
+class Lecture3_MultiplicationAsComposition(Scene):
+    """Matrix multiplication AB as applying B first, then A on a grid."""
+
+    def construct(self):
+        # Title with background
+        title_text = Text(
+            "Matrix Multiplication = Composition", font_size=36, color=YELLOW
+        )
+        title_bg = BackgroundRectangle(title_text, color=BLACK, fill_opacity=0.85, buff=0.2)
+        title = VGroup(title_bg, title_text)
+        title.to_edge(UP, buff=0.3)
+        title.set_z_index(10)
+
+        # Grid and basis vectors
+        plane = NumberPlane(
+            x_range=[-5, 5], y_range=[-5, 5],
+            background_line_style={"stroke_opacity": 0.4},
+        )
+        i_hat = Arrow(ORIGIN, RIGHT, buff=0, color=GREEN, stroke_width=5)
+        j_hat = Arrow(ORIGIN, UP, buff=0, color=RED, stroke_width=5)
+
+        self.play(Create(plane), GrowArrow(i_hat), GrowArrow(j_hat), run_time=1.5)
+        self.play(FadeIn(title), run_time=0.6)
+        self.wait(0.5)
+
+        # Matrices
+        # B = 90-degree rotation, A = shear
+        B = [[0, -1], [1, 0]]
+        A = [[1, 1], [0, 1]]
+        # AB = [[1*0+1*1, 1*(-1)+1*0], [0*0+1*1, 0*(-1)+1*0]] = [[1,-1],[1,0]]
+
+        # Step 1: Apply B (rotation)
+        step1_text = Text("Apply B first (rotation):", font_size=26, color=BLUE)
+        step1_bg = BackgroundRectangle(step1_text, color=BLACK, fill_opacity=0.85, buff=0.15)
+        step1 = VGroup(step1_bg, step1_text)
+        step1.to_edge(DOWN, buff=0.8)
+        step1.set_z_index(10)
+
+        b_mat = MathTex(
+            r"B = \begin{bmatrix} 0 & -1 \\ 1 & 0 \end{bmatrix}",
+            font_size=28, color=BLUE,
+        )
+        b_mat_bg = BackgroundRectangle(b_mat, color=BLACK, fill_opacity=0.85, buff=0.15)
+        b_group = VGroup(b_mat_bg, b_mat)
+        b_group.next_to(step1, UP, buff=0.25)
+        b_group.set_z_index(10)
+
+        self.play(FadeIn(step1), FadeIn(b_group), run_time=0.7)
+        self.play(
+            ApplyMatrix(B, plane),
+            ApplyMatrix(B, i_hat),
+            ApplyMatrix(B, j_hat),
+            run_time=3,
+        )
+        self.wait(1)
+
+        # Step 2: Apply A (shear)
+        step2_text = Text("Then apply A (shear):", font_size=26, color=ORANGE)
+        step2_bg = BackgroundRectangle(step2_text, color=BLACK, fill_opacity=0.85, buff=0.15)
+        step2 = VGroup(step2_bg, step2_text)
+        step2.to_edge(DOWN, buff=0.8)
+        step2.set_z_index(10)
+
+        a_mat = MathTex(
+            r"A = \begin{bmatrix} 1 & 1 \\ 0 & 1 \end{bmatrix}",
+            font_size=28, color=ORANGE,
+        )
+        a_mat_bg = BackgroundRectangle(a_mat, color=BLACK, fill_opacity=0.85, buff=0.15)
+        a_group = VGroup(a_mat_bg, a_mat)
+        a_group.next_to(step2, UP, buff=0.25)
+        a_group.set_z_index(10)
+
+        self.play(
+            FadeOut(step1), FadeOut(b_group),
+            FadeIn(step2), FadeIn(a_group),
+            run_time=0.7,
+        )
+        self.play(
+            ApplyMatrix(A, plane),
+            ApplyMatrix(A, i_hat),
+            ApplyMatrix(A, j_hat),
+            run_time=3,
+        )
+        self.wait(1)
+
+        # Show combined result
+        self.play(FadeOut(step2), FadeOut(a_group), run_time=0.5)
+
+        result = MathTex(
+            r"AB = \begin{bmatrix} 1 & 1 \\ 0 & 1 \end{bmatrix}"
+            r"\begin{bmatrix} 0 & -1 \\ 1 & 0 \end{bmatrix}"
+            r"= \begin{bmatrix} 1 & -1 \\ 1 & 0 \end{bmatrix}",
+            font_size=28, color=WHITE,
+        )
+        result_bg = BackgroundRectangle(result, color=BLACK, fill_opacity=0.85, buff=0.15)
+        result_group = VGroup(result_bg, result)
+        result_group.to_edge(DOWN, buff=1.0)
+        result_group.set_z_index(10)
+        self.play(FadeIn(result_group), run_time=0.8)
+        self.wait(1.5)
+
+        # Key insight
+        insight_text = Text(
+            "AB \u2260 BA in general \u2014 order matters!",
+            font_size=30, color=YELLOW,
+        )
+        insight_bg = BackgroundRectangle(insight_text, color=BLACK, fill_opacity=0.85, buff=0.15)
+        insight = VGroup(insight_bg, insight_text)
+        insight.next_to(result_group, UP, buff=0.3)
+        insight.set_z_index(10)
+        self.play(FadeIn(insight), run_time=0.8)
+        self.wait(2)
+
+
+class Lecture3_CompositionOrderMatters(Scene):
+    """Shows that AB != BA by applying transformations in both orders."""
+
+    def construct(self):
+        title_text = Text(
+            "Does Order Matter? AB vs BA", font_size=36, color=YELLOW
+        )
+        title_text.to_edge(UP, buff=0.3)
+        self.play(Write(title_text), run_time=0.8)
+        self.wait(0.5)
+
+        A = [[1, 1], [0, 1]]  # shear
+        B = [[0, -1], [1, 0]]  # 90-degree rotation
+
+        # --- Left side: AB (apply B first, then A) ---
+        left_label = Text("AB: B first, then A", font_size=22, color=BLUE)
+        left_label.shift(LEFT * 3.5 + UP * 2.2)
+
+        left_plane = NumberPlane(
+            x_range=[-4, 4], y_range=[-4, 4],
+            background_line_style={"stroke_opacity": 0.3},
+        ).scale(0.4).shift(LEFT * 3.5)
+        left_i = Arrow(
+            left_plane.get_center(),
+            left_plane.get_center() + RIGHT * 0.4,
+            buff=0, color=GREEN, stroke_width=3,
+        )
+        left_j = Arrow(
+            left_plane.get_center(),
+            left_plane.get_center() + UP * 0.4,
+            buff=0, color=RED, stroke_width=3,
+        )
+        left_group = VGroup(left_plane, left_i, left_j)
+
+        # --- Right side: BA (apply A first, then B) ---
+        right_label = Text("BA: A first, then B", font_size=22, color=ORANGE)
+        right_label.shift(RIGHT * 3.5 + UP * 2.2)
+
+        right_plane = NumberPlane(
+            x_range=[-4, 4], y_range=[-4, 4],
+            background_line_style={"stroke_opacity": 0.3},
+        ).scale(0.4).shift(RIGHT * 3.5)
+        right_i = Arrow(
+            right_plane.get_center(),
+            right_plane.get_center() + RIGHT * 0.4,
+            buff=0, color=GREEN, stroke_width=3,
+        )
+        right_j = Arrow(
+            right_plane.get_center(),
+            right_plane.get_center() + UP * 0.4,
+            buff=0, color=RED, stroke_width=3,
+        )
+        right_group = VGroup(right_plane, right_i, right_j)
+
+        self.play(
+            Create(left_plane), Create(right_plane),
+            GrowArrow(left_i), GrowArrow(left_j),
+            GrowArrow(right_i), GrowArrow(right_j),
+            FadeIn(left_label), FadeIn(right_label),
+            run_time=1.5,
+        )
+        self.wait(0.5)
+
+        # Left side: apply B then A
+        step_left_1 = Text("B (rotate)", font_size=18, color=BLUE_C)
+        step_left_1.next_to(left_group, DOWN, buff=0.2)
+        self.play(FadeIn(step_left_1), run_time=0.4)
+        self.play(
+            ApplyMatrix(B, left_plane),
+            ApplyMatrix(B, left_i),
+            ApplyMatrix(B, left_j),
+            run_time=2,
+        )
+        self.wait(0.3)
+
+        step_left_2 = Text("then A (shear)", font_size=18, color=BLUE_C)
+        step_left_2.next_to(step_left_1, DOWN, buff=0.15)
+        self.play(FadeIn(step_left_2), run_time=0.4)
+        self.play(
+            ApplyMatrix(A, left_plane),
+            ApplyMatrix(A, left_i),
+            ApplyMatrix(A, left_j),
+            run_time=2,
+        )
+        self.wait(0.5)
+
+        # Right side: apply A then B
+        step_right_1 = Text("A (shear)", font_size=18, color=ORANGE)
+        step_right_1.next_to(right_group, DOWN, buff=0.2)
+        self.play(FadeIn(step_right_1), run_time=0.4)
+        self.play(
+            ApplyMatrix(A, right_plane),
+            ApplyMatrix(A, right_i),
+            ApplyMatrix(A, right_j),
+            run_time=2,
+        )
+        self.wait(0.3)
+
+        step_right_2 = Text("then B (rotate)", font_size=18, color=ORANGE)
+        step_right_2.next_to(step_right_1, DOWN, buff=0.15)
+        self.play(FadeIn(step_right_2), run_time=0.4)
+        self.play(
+            ApplyMatrix(B, right_plane),
+            ApplyMatrix(B, right_i),
+            ApplyMatrix(B, right_j),
+            run_time=2,
+        )
+        self.wait(1)
+
+        # Show results
+        # AB = [[1,-1],[1,0]], BA = [[0,-1],[1,1]]
+        ab_result = MathTex(
+            r"AB = \begin{bmatrix} 1 & -1 \\ 1 & 0 \end{bmatrix}",
+            font_size=24, color=BLUE,
+        )
+        ab_result.next_to(step_left_2, DOWN, buff=0.3)
+
+        ba_result = MathTex(
+            r"BA = \begin{bmatrix} 0 & -1 \\ 1 & 1 \end{bmatrix}",
+            font_size=24, color=ORANGE,
+        )
+        ba_result.next_to(step_right_2, DOWN, buff=0.3)
+
+        self.play(FadeIn(ab_result), FadeIn(ba_result), run_time=0.8)
+        self.wait(1)
+
+        # Bottom conclusion
+        conclusion = Text(
+            "Matrix multiplication is NOT commutative",
+            font_size=28, color=YELLOW,
+        )
+        conclusion.to_edge(DOWN, buff=0.4)
+        self.play(Write(conclusion), run_time=1)
+        self.wait(2)
+
+
+class Lecture3_InverseUndoesTransformation(Scene):
+    """Shows A inverse undoing A's transformation on the grid."""
+
+    def construct(self):
+        # Title
+        title_text = Text(
+            "Inverse = Undo the Transformation", font_size=36, color=YELLOW
+        )
+        title_bg = BackgroundRectangle(title_text, color=BLACK, fill_opacity=0.85, buff=0.2)
+        title = VGroup(title_bg, title_text)
+        title.to_edge(UP, buff=0.3)
+        title.set_z_index(10)
+
+        # Grid, basis vectors, and a tracked point
+        plane = NumberPlane(
+            x_range=[-5, 5], y_range=[-5, 5],
+            background_line_style={"stroke_opacity": 0.4},
+        )
+        i_hat = Arrow(ORIGIN, RIGHT, buff=0, color=GREEN, stroke_width=5)
+        j_hat = Arrow(ORIGIN, UP, buff=0, color=RED, stroke_width=5)
+        tracked_dot = Dot(point=[1, 2, 0], color=YELLOW, radius=0.1)
+        dot_label = MathTex(r"\begin{bmatrix}1\\2\end{bmatrix}", font_size=22, color=YELLOW)
+        dot_label.next_to(tracked_dot, UR, buff=0.1)
+        dot_label.set_z_index(10)
+        dot_label_bg = BackgroundRectangle(dot_label, color=BLACK, fill_opacity=0.7, buff=0.1)
+        dot_label_bg.set_z_index(9)
+
+        self.play(
+            Create(plane), GrowArrow(i_hat), GrowArrow(j_hat),
+            FadeIn(tracked_dot), FadeIn(dot_label_bg), FadeIn(dot_label),
+            run_time=1.5,
+        )
+        self.play(FadeIn(title), run_time=0.6)
+        self.wait(0.5)
+
+        # A = [[2,1],[1,1]], A_inv = [[1,-1],[-1,2]]
+        A = [[2, 1], [1, 1]]
+        A_inv = [[1, -1], [-1, 2]]
+
+        # Apply A
+        apply_a_text = Text("Apply A", font_size=26, color=BLUE)
+        apply_a_bg = BackgroundRectangle(apply_a_text, color=BLACK, fill_opacity=0.85, buff=0.15)
+        apply_a = VGroup(apply_a_bg, apply_a_text)
+        apply_a.to_edge(DOWN, buff=0.8)
+        apply_a.set_z_index(10)
+
+        a_mat_label = MathTex(
+            r"A = \begin{bmatrix} 2 & 1 \\ 1 & 1 \end{bmatrix}",
+            font_size=28, color=BLUE,
+        )
+        a_mat_bg = BackgroundRectangle(a_mat_label, color=BLACK, fill_opacity=0.85, buff=0.15)
+        a_mat_group = VGroup(a_mat_bg, a_mat_label)
+        a_mat_group.next_to(apply_a, UP, buff=0.25)
+        a_mat_group.set_z_index(10)
+
+        self.play(FadeIn(apply_a), FadeIn(a_mat_group), run_time=0.7)
+        self.play(
+            ApplyMatrix(A, plane),
+            ApplyMatrix(A, i_hat),
+            ApplyMatrix(A, j_hat),
+            ApplyMatrix(A, tracked_dot),
+            FadeOut(dot_label_bg), FadeOut(dot_label),
+            run_time=3,
+        )
+        self.wait(1.5)
+
+        # Apply A inverse
+        apply_ainv_text = Text("Apply A\u207b\u00b9", font_size=26, color=TEAL)
+        apply_ainv_bg = BackgroundRectangle(
+            apply_ainv_text, color=BLACK, fill_opacity=0.85, buff=0.15
+        )
+        apply_ainv = VGroup(apply_ainv_bg, apply_ainv_text)
+        apply_ainv.to_edge(DOWN, buff=0.8)
+        apply_ainv.set_z_index(10)
+
+        ainv_mat_label = MathTex(
+            r"A^{-1} = \begin{bmatrix} 1 & -1 \\ -1 & 2 \end{bmatrix}",
+            font_size=28, color=TEAL,
+        )
+        ainv_mat_bg = BackgroundRectangle(ainv_mat_label, color=BLACK, fill_opacity=0.85, buff=0.15)
+        ainv_mat_group = VGroup(ainv_mat_bg, ainv_mat_label)
+        ainv_mat_group.next_to(apply_ainv, UP, buff=0.25)
+        ainv_mat_group.set_z_index(10)
+
+        self.play(
+            FadeOut(apply_a), FadeOut(a_mat_group),
+            FadeIn(apply_ainv), FadeIn(ainv_mat_group),
+            run_time=0.7,
+        )
+        self.play(
+            ApplyMatrix(A_inv, plane),
+            ApplyMatrix(A_inv, i_hat),
+            ApplyMatrix(A_inv, j_hat),
+            ApplyMatrix(A_inv, tracked_dot),
+            run_time=3,
+        )
+        self.wait(1)
+
+        # Show equation
+        self.play(FadeOut(apply_ainv), FadeOut(ainv_mat_group), run_time=0.5)
+
+        equation = MathTex(r"A^{-1} A = I", font_size=36, color=WHITE)
+        eq_bg = BackgroundRectangle(equation, color=BLACK, fill_opacity=0.85, buff=0.15)
+        eq_group = VGroup(eq_bg, equation)
+        eq_group.to_edge(DOWN, buff=1.2)
+        eq_group.set_z_index(10)
+        self.play(FadeIn(eq_group), run_time=0.8)
+        self.wait(1)
+
+        # Key insight
+        insight_text = Text(
+            "The inverse transformation perfectly reverses the original",
+            font_size=26, color=YELLOW,
+        )
+        insight_bg = BackgroundRectangle(insight_text, color=BLACK, fill_opacity=0.85, buff=0.15)
+        insight = VGroup(insight_bg, insight_text)
+        insight.next_to(eq_group, UP, buff=0.3)
+        insight.set_z_index(10)
+        self.play(FadeIn(insight), run_time=0.8)
+        self.wait(2)
+
+
+class Lecture3_SingularNoInverse(Scene):
+    """Shows why a singular matrix has no inverse — space gets squished."""
+
+    def construct(self):
+        # Title
+        title_text = Text(
+            "Singular Matrix: No Inverse", font_size=36, color=YELLOW
+        )
+        title_bg = BackgroundRectangle(title_text, color=BLACK, fill_opacity=0.85, buff=0.2)
+        title = VGroup(title_bg, title_text)
+        title.to_edge(UP, buff=0.3)
+        title.set_z_index(10)
+
+        # Grid and basis vectors
+        plane = NumberPlane(
+            x_range=[-5, 5], y_range=[-5, 5],
+            background_line_style={"stroke_opacity": 0.4},
+        )
+        i_hat = Arrow(ORIGIN, RIGHT, buff=0, color=GREEN, stroke_width=5)
+        j_hat = Arrow(ORIGIN, UP, buff=0, color=RED, stroke_width=5)
+
+        # Several colored dots at different positions
+        dot_positions = [
+            ([1, 0, 0], BLUE),
+            ([0, 1, 0], ORANGE),
+            ([1, 1, 0], PURPLE),
+            ([-1, 1, 0], TEAL),
+            ([2, -1, 0], PINK),
+            ([-1, -1, 0], MAROON),
+        ]
+        dots = VGroup()
+        for pos, col in dot_positions:
+            dots.add(Dot(point=pos, color=col, radius=0.08))
+
+        self.play(
+            Create(plane), GrowArrow(i_hat), GrowArrow(j_hat),
+            *[FadeIn(d) for d in dots],
+            run_time=1.5,
+        )
+        self.play(FadeIn(title), run_time=0.6)
+        self.wait(0.5)
+
+        # Singular matrix: [[1, 2], [0.5, 1]], det = 1*1 - 2*0.5 = 0
+        S = [[1, 2], [0.5, 1]]
+
+        mat_label = MathTex(
+            r"A = \begin{bmatrix} 1 & 2 \\ 0.5 & 1 \end{bmatrix}",
+            font_size=28, color=WHITE,
+        )
+        mat_bg = BackgroundRectangle(mat_label, color=BLACK, fill_opacity=0.85, buff=0.15)
+        mat_group = VGroup(mat_bg, mat_label)
+        mat_group.to_corner(UL, buff=0.5).shift(DOWN * 0.8)
+        mat_group.set_z_index(10)
+        self.play(FadeIn(mat_group), run_time=0.7)
+
+        # Apply singular matrix
+        self.play(
+            ApplyMatrix(S, plane),
+            ApplyMatrix(S, i_hat),
+            ApplyMatrix(S, j_hat),
+            *[ApplyMatrix(S, d) for d in dots],
+            run_time=3,
+        )
+        self.wait(1)
+
+        # Show det = 0
+        det_text = MathTex(
+            r"\det(A) = 1 \cdot 1 - 2 \cdot 0.5 = 0",
+            font_size=28, color=RED,
+        )
+        det_bg = BackgroundRectangle(det_text, color=BLACK, fill_opacity=0.85, buff=0.15)
+        det_group = VGroup(det_bg, det_text)
+        det_group.to_edge(DOWN, buff=1.5)
+        det_group.set_z_index(10)
+
+        squish_text = Text(
+            "Space squished to a line!", font_size=26, color=RED
+        )
+        squish_bg = BackgroundRectangle(squish_text, color=BLACK, fill_opacity=0.85, buff=0.15)
+        squish_group = VGroup(squish_bg, squish_text)
+        squish_group.next_to(det_group, UP, buff=0.25)
+        squish_group.set_z_index(10)
+
+        self.play(FadeIn(det_group), FadeIn(squish_group), run_time=0.8)
+        self.wait(1.5)
+
+        # Information lost
+        self.play(FadeOut(squish_group), run_time=0.4)
+
+        lost_text = Text(
+            "Can't un-squish! Information is lost",
+            font_size=26, color=ORANGE,
+        )
+        lost_bg = BackgroundRectangle(lost_text, color=BLACK, fill_opacity=0.85, buff=0.15)
+        lost_group = VGroup(lost_bg, lost_text)
+        lost_group.next_to(det_group, UP, buff=0.25)
+        lost_group.set_z_index(10)
+        self.play(FadeIn(lost_group), run_time=0.8)
+        self.wait(1)
+
+        # Show that multiple inputs map to same output
+        arrow_note = Text(
+            "Multiple input vectors \u2192 same output point",
+            font_size=22, color=GREY,
+        )
+        arrow_note_bg = BackgroundRectangle(arrow_note, color=BLACK, fill_opacity=0.85, buff=0.1)
+        arrow_group = VGroup(arrow_note_bg, arrow_note)
+        arrow_group.next_to(lost_group, UP, buff=0.25)
+        arrow_group.set_z_index(10)
+        self.play(FadeIn(arrow_group), run_time=0.7)
+        self.wait(1.5)
+
+        # Conclusion
+        self.play(
+            FadeOut(lost_group), FadeOut(arrow_group),
+            FadeOut(det_group), FadeOut(mat_group),
+            run_time=0.5,
+        )
+
+        conclusion = Text(
+            "No inverse exists for singular matrices",
+            font_size=30, color=YELLOW,
+        )
+        conclusion_bg = BackgroundRectangle(conclusion, color=BLACK, fill_opacity=0.85, buff=0.2)
+        conclusion_group = VGroup(conclusion_bg, conclusion)
+        conclusion_group.to_edge(DOWN, buff=1.0)
+        conclusion_group.set_z_index(10)
+        self.play(FadeIn(conclusion_group), run_time=0.8)
+        self.wait(2)
