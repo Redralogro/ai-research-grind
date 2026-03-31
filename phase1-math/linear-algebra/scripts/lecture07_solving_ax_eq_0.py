@@ -183,7 +183,7 @@ class Lecture7_ReducedRowEchelon(Scene):
             font_size=36,
         ).shift(DOWN * 2)
         detail = MathTex(
-            r"I = \begin{pmatrix}1&0\\0&1\end{pmatrix},\quad"
+            r"I = \begin{pmatrix}1&0\\0&1\end{pmatrix},\quad "
             r"F = \begin{pmatrix}2&-2\\0&2\end{pmatrix}",
             font_size=32,
             color=FREE_COLOR,

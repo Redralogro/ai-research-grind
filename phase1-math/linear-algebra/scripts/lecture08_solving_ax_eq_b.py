@@ -120,7 +120,7 @@ class Lecture8_ParticularSolution(Scene):
 
         # ── Take b = (1,5,6) ──
         setup = MathTex(
-            r"A = \begin{pmatrix}1&2&2&2\\2&4&6&8\\3&6&8&10\end{pmatrix},\quad"
+            r"A = \begin{pmatrix}1&2&2&2\\2&4&6&8\\3&6&8&10\end{pmatrix},\quad "
             r"b = \begin{pmatrix}1\\5\\6\end{pmatrix}",
             font_size=30,
         ).next_to(title, DOWN, buff=0.5)
@@ -129,7 +129,7 @@ class Lecture8_ParticularSolution(Scene):
 
         # ── After elimination ──
         elim = MathTex(
-            r"U = \begin{pmatrix}1&2&2&2\\0&0&2&4\\0&0&0&0\end{pmatrix},\quad"
+            r"U = \begin{pmatrix}1&2&2&2\\0&0&2&4\\0&0&0&0\end{pmatrix},\quad "
             r"c = \begin{pmatrix}1\\3\\0\end{pmatrix}",
             font_size=30,
         ).next_to(setup, DOWN, buff=0.4)
